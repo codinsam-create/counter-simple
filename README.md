@@ -20,7 +20,8 @@ Dependencies. Der Wert liegt aktuell nur lokal im Browser (`localStorage`).
 | `index.html` | Markup der App |
 | `styles.css` | Styling |
 | `script.js` | Zähl-Logik, Persistenz, Auth, Sync, PWA-Handling |
-| `config.js` | Öffentliche Supabase-URL und Publishable Key |
+| `backend-supabase.js` | Backend-Implementierung für Supabase |
+| `config.js` | Öffentliche Konfiguration und Backend-Auswahl |
 | `sw.js` | Service Worker (Offline-Cache) |
 | `manifest.webmanifest` | PWA-Metadaten und Icons |
 | `_headers` | Eigene HTTP-Header (Cloudflare, Netlify) |
@@ -80,4 +81,5 @@ Die App läuft ohne Codeänderung auf drei Anbietern:
 - Netlify: <https://counter-simple-f10c13.netlify.app/>
 
 Details, Messwerte und Erkenntnisse stehen in [DEPLOY.md](DEPLOY.md).
-Als Nächstes folgen Accounts und Sync über ein BaaS.
+Accounts und Sync laufen über Supabase. Als Nächstes folgt Etappe C: ein
+eigener Node-Server mit Postgres, angebunden über dieselbe Backend-Schnittstelle.

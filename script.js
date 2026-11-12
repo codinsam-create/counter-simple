@@ -25,25 +25,19 @@
   const authSubmit = document.getElementById("auth-submit");
   const authSwitch = document.getElementById("auth-switch");
 
-  // --- Supabase -------------------------------------------------------------
+  // --- Backend --------------------------------------------------------------
 
   const config = window.COUNTER_CONFIG;
-  const sb =
-    window.supabase && config?.supabaseUrl && config?.supabaseKey
-      ? window.supabase.createClient(config.supabaseUrl, config.supabaseKey, {
-          auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: false,
-          },
-        })
+  const backend =
+    config?.backend && window.CounterBackends?.[config.backend]
+      ? window.CounterBackends[config.backend].create(config)
       : null;
 
   // --- Zustand --------------------------------------------------------------
 
   let anonCount = readStoredValue();
   let pending = readPending();
-  let session = null;
+  let authUser = null;
   let currentUserId = null;
   let serverTotal = 0;
   let flushing = false;
@@ -53,7 +47,7 @@
   let installPrompt = null;
 
   function currentUser() {
-    return session?.user ?? null;
+    return authUser;
   }
 
   function newId() {
@@ -221,14 +215,13 @@
 
   async function refreshTotal() {
     const user = currentUser();
-    if (!sb || !user || !navigator.onLine) return;
+    if (!backend || !user || !navigator.onLine) return;
 
     try {
-      const { data, error } = await sb.rpc("counter_total");
-      if (error) throw error;
+      const total = await backend.fetchTotal();
       if (currentUser()?.id !== user.id) return;
 
-      serverTotal = Number(data) || 0;
+      serverTotal = Number(total) || 0;
       writeCachedTotal(user.id, serverTotal);
       render();
     } catch (error) {
@@ -238,7 +231,7 @@
 
   async function flush() {
     const user = currentUser();
-    if (!sb || !user) return;
+    if (!backend || !user) return;
 
     if (!navigator.onLine) {
       updateSyncUI();
@@ -261,16 +254,7 @@
     updateSyncUI();
 
     try {
-      // ignoreDuplicates macht den Upload idempotent: Ein bereits bekanntes
-      // client_event_id wird stillschweigend übersprungen.
-      const { error } = await sb.from("counter_events").upsert(
-        batch.map((event) => ({
-          delta: event.delta,
-          client_event_id: event.id,
-        })),
-        { onConflict: "user_id,client_event_id", ignoreDuplicates: true },
-      );
-      if (error) throw error;
+      await backend.pushEvents(batch);
 
       const sentIds = new Set(batch.map((event) => event.id));
       pending = pending.filter((event) => !sentIds.has(event.id));
@@ -393,12 +377,10 @@
   }
 
   async function signOut() {
-    if (!sb) return;
+    if (!backend) return;
 
     try {
-      // "local" entfernt die Session nur auf diesem Gerät und funktioniert
-      // auch ohne Netzwerkverbindung.
-      await sb.auth.signOut({ scope: "local" });
+      await backend.signOut();
     } catch (error) {
       console.warn("Abmelden fehlgeschlagen:", error);
     }
@@ -428,25 +410,17 @@
       showAuthError("Bitte gib eine E-Mail und ein Passwort mit mindestens 6 Zeichen ein.");
       return;
     }
-    if (!sb) {
-      showAuthError("Supabase ist nicht konfiguriert.");
+    if (!backend) {
+      showAuthError("Backend ist nicht konfiguriert.");
       return;
     }
 
     setAuthBusy(true);
     try {
-      const { error } =
-        authMode === "signup"
-          ? await sb.auth.signUp({ email, password })
-          : await sb.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-
-      const { data } = await sb.auth.getSession();
-      if (!data.session) {
-        showAuthError(
-          "Konto erstellt. Bitte bestätige zuerst die E-Mail und melde dich dann an.",
-        );
-        return;
+      if (authMode === "signup") {
+        await backend.signUp(email, password);
+      } else {
+        await backend.signIn(email, password);
       }
 
       authDialog.close();
@@ -457,13 +431,9 @@
     }
   });
 
-  if (sb) {
-    sb.auth.onAuthStateChange((event, newSession) => {
-      // Die initiale Session laden wir in init() selbst.
-      if (event === "INITIAL_SESSION") return;
-
-      session = newSession;
-      const user = newSession?.user ?? null;
+  if (backend) {
+    backend.onChange((user) => {
+      authUser = user;
       updateAccountUI();
 
       if (!user) {
@@ -481,7 +451,7 @@
 
       currentUserId = user.id;
       syncError = null;
-      // Nicht direkt im Auth-Callback auf die Datenbank zugreifen.
+      // Nicht direkt im Auth-Callback auf das Backend zugreifen.
       setTimeout(() => startSession(user), 0);
     });
   }
@@ -616,15 +586,14 @@
     updateOnlineStatus();
     render();
 
-    if (sb) {
+    if (backend) {
       try {
-        const { data } = await sb.auth.getSession();
-        session = data.session;
+        authUser = await backend.init();
 
-        if (session?.user) {
-          currentUserId = session.user.id;
+        if (authUser) {
+          currentUserId = authUser.id;
           updateAccountUI();
-          await startSession(session.user);
+          await startSession(authUser);
         }
       } catch (error) {
         console.warn("Session konnte nicht geladen werden:", error);

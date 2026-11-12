@@ -1,4 +1,4 @@
-const CACHE_NAME = "counter-v2";
+const CACHE_NAME = "counter-v3";
 
 const APP_SHELL = [
   "./",
@@ -6,6 +6,7 @@ const APP_SHELL = [
   "./config.js",
   "./styles.css",
   "./script.js",
+  "./backend-supabase.js",
   "./vendor/supabase-js.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",

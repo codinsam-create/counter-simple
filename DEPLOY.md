@@ -47,4 +47,6 @@ gemessen, nicht aus Dokumentation übernommen.
 - Vorschau-Deploys pro Branch wurden noch nicht ausprobiert.
 - `README.md` und `.gitignore` liegen im Publish-Verzeichnis. Sauberer wäre ein
   `public/`-Ordner als Auslieferungsordner.
-- Wahl des Hosts für Etappe B (Accounts + Sync) steht noch aus.
+- Etappe B (Supabase) ist umgesetzt und getestet.
+- Etappe C (eigener Node-Server + Postgres) folgt; Hosting muss im Free-Tier
+  bleiben.
