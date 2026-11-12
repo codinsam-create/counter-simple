@@ -1,0 +1,12 @@
+# Eigene HTTP-Header für Cloudflare Workers (Static Assets).
+# Wird von Cloudflare geparst und nicht selbst ausgeliefert.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+
+# Der Service Worker muss bei jedem Laden revalidiert werden,
+# damit Updates sofort erkannt werden.
+/sw.js
+  Cache-Control: no-cache
