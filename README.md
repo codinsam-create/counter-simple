@@ -42,7 +42,21 @@ Summe der Deltas.
   statt sich gegenseitig zu überschreiben.
 - **Sicher:** Row Level Security erlaubt jedem User nur die eigenen Events.
 
-Der lokale Zählerstand wird beim ersten Login als Delta in das Konto übernommen.
+Der lokale Zählerstand wird beim Login als Delta in das Konto übernommen.
+
+**Bekannte Grenze:** Auch „Reset“ ist ein Delta (minus aktueller Stand). Wenn
+zwei Geräte offline unabhängig zurücksetzen, addieren sich die Resets und der
+Wert kann negativ werden. Für das Lernprojekt ist das bewusst so belassen.
+
+## Testen
+
+1. Ohne Konto zählen – funktioniert wie vorher, nur lokal.
+2. Auf „Anmelden“ → „Registrieren“, Konto erstellen. Der lokale Stand wird
+   übernommen.
+3. Denselben Account in einem zweiten Browser oder auf dem Handy einloggen –
+   beide zeigen denselben Stand.
+4. In beiden Browsern offline zählen, dann wieder online gehen. Die Summe
+   beider Geräte muss erscheinen.
 
 ## Lokal starten
 
