@@ -42,6 +42,13 @@
       </button>
     </div>
 
+    <div class="account">
+      <span class="account-label" id="account-label">Nur auf diesem Gerät</span>
+      <button class="account-btn" id="account-btn" type="button">Anmelden</button>
+    </div>
+
+    <p class="sync" id="sync" role="status" aria-live="polite" hidden></p>
+
     <button class="install" id="install" type="button" hidden>App installieren</button>
 
     <p class="hint" id="hint">
@@ -49,6 +56,45 @@
     </p>
   </main>
 
-  <script src="script.js"></script>
+  <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-title">
+    <form class="auth-form" id="auth-form" novalidate>
+      <h2 class="auth-title" id="auth-title">Anmelden</h2>
+      <p class="auth-intro" id="auth-intro">
+        Melde dich an, um deinen Zähler auf mehreren Geräten zu synchronisieren.
+      </p>
+
+      <label class="auth-field">
+        <span>E-Mail</span>
+        <input id="auth-email" name="email" type="email" autocomplete="email" required>
+      </label>
+
+      <label class="auth-field">
+        <span>Passwort</span>
+        <input
+          id="auth-password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          minlength="6"
+          required
+        >
+      </label>
+
+      <p class="auth-error" id="auth-error" role="alert" hidden></p>
+
+      <div class="auth-actions">
+        <button class="btn btn-reset" id="auth-cancel" type="button">Abbrechen</button>
+        <button class="btn btn-increment" id="auth-submit" type="submit">Anmelden</button>
+      </div>
+
+      <button class="auth-switch" id="auth-switch" type="button">
+        Noch kein Konto? Registrieren
+      </button>
+    </form>
+  </dialog>
+
+  <script src="./config.js"></script>
+  <script src="./vendor/supabase-js.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>

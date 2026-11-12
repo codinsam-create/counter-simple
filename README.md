@@ -10,6 +10,8 @@ Dependencies. Der Wert liegt aktuell nur lokal im Browser (`localStorage`).
 - Offline nutzbar (Service Worker cached die App-Shell)
 - Installierbar (Manifest, Install-Prompt)
 - Shortcut `?reset=1` setzt den Zähler beim Öffnen zurück
+- Optionales Konto: Zähler wird über Supabase geräteübergreifend synchronisiert
+- Offline-Zählungen werden lokal gepuffert und später nachgereicht
 
 ## Struktur
 
@@ -17,11 +19,30 @@ Dependencies. Der Wert liegt aktuell nur lokal im Browser (`localStorage`).
 | --- | --- |
 | `index.html` | Markup der App |
 | `styles.css` | Styling |
-| `script.js` | Zähl-Logik, Persistenz, PWA-Handling |
+| `script.js` | Zähl-Logik, Persistenz, Auth, Sync, PWA-Handling |
+| `config.js` | Öffentliche Supabase-URL und Publishable Key |
 | `sw.js` | Service Worker (Offline-Cache) |
 | `manifest.webmanifest` | PWA-Metadaten und Icons |
 | `_headers` | Eigene HTTP-Header (Cloudflare, Netlify) |
+| `vendor/` | Lokal mitgelieferte Fremdbibliotheken |
+| `supabase/schema.sql` | Datenbank-Schema, RLS-Policies, RPC |
 | `icons/` | App-Icons |
+
+## Sync-Modell
+
+Der Zähler ist ein unveränderliches Event-Log: Jede Änderung ist eine Zeile mit
+`delta` und einer vom Client erzeugten `client_event_id`. Der Stand ist die
+Summe der Deltas.
+
+- **Idempotent:** `(user_id, client_event_id)` ist eindeutig. Ein Retry kann
+  ein Event nicht doppelt zählen.
+- **Offlinefähig:** Nicht gesendete Deltas liegen in `localStorage` und werden
+  beim nächsten Verbindungsaufbau übertragen.
+- **Konfliktfrei:** Zwei Geräte, die offline zählen, addieren ihre Deltas,
+  statt sich gegenseitig zu überschreiben.
+- **Sicher:** Row Level Security erlaubt jedem User nur die eigenen Events.
+
+Der lokale Zählerstand wird beim ersten Login als Delta in das Konto übernommen.
 
 ## Lokal starten
 

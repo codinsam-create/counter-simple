@@ -131,6 +131,11 @@ body {
   transform: scale(0.96);
 }
 
+.btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
 .btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
@@ -162,6 +167,159 @@ body {
 .btn-reset:hover {
   color: var(--danger);
   border-color: rgba(255, 107, 129, 0.4);
+}
+
+/* --- Konto und Sync ------------------------------------------------------ */
+
+.account {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.account-label {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-btn {
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+}
+
+.account-btn:hover {
+  border-bottom-color: currentColor;
+}
+
+.account-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.sync {
+  margin: 12px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.sync.is-error {
+  color: var(--danger);
+}
+
+/* --- Login-Dialog -------------------------------------------------------- */
+
+.auth-dialog {
+  width: min(100% - 32px, 360px);
+  max-height: calc(100% - 48px);
+  padding: 28px 24px 24px;
+  overflow: auto;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+.auth-dialog::backdrop {
+  background: rgba(5, 7, 12, 0.7);
+  backdrop-filter: blur(2px);
+}
+
+.auth-form {
+  display: grid;
+  gap: 14px;
+}
+
+.auth-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.auth-intro {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.auth-field {
+  display: grid;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--muted);
+}
+
+.auth-field input {
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--text);
+  background: #202433;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.auth-field input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.auth-error {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--danger);
+}
+
+.auth-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.auth-actions .btn {
+  min-height: 46px;
+  font-size: 0.85rem;
+}
+
+.auth-switch {
+  padding: 0;
+  font: inherit;
+  font-size: 0.78rem;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.auth-switch:hover {
+  color: var(--text);
+}
+
+.auth-switch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 .hint {

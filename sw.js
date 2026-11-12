@@ -1,10 +1,12 @@
-const CACHE_NAME = "counter-v1";
+const CACHE_NAME = "counter-v2";
 
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./config.js",
   "./styles.css",
   "./script.js",
+  "./vendor/supabase-js.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
