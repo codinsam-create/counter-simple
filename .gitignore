@@ -1,0 +1,20 @@
+# Betriebssystem
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+*.swp
+
+# Node / Tooling (aktuell ungenutzt)
+node_modules/
+npm-debug.log*
+
+# Zustand von Hoster-CLIs
+.wrangler/
+.netlify/
+.vercel/
+
+# Lokale Geheimnisse
+.env
+.env.*
